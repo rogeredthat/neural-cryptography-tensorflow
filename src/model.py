@@ -8,9 +8,9 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from layers import conv_layer
 from config import *
-from utils import init_weights, gen_data
+from layers import *
+from utils import *
 
 
 class CryptoNet(object):
@@ -93,11 +93,11 @@ class CryptoNet(object):
         for i in range(self.epochs):
             iterations = 2000
 
-            print 'Training Alice and Bob, Epoch:', i + 1
+            print('Training Alice and Bob, Epoch:', i + 1)
             bob_loss, _ = self._train('bob', iterations)
             self.bob_errors.append(bob_loss)
 
-            print 'Training Eve, Epoch:', i + 1
+            print('Training Eve, Epoch:', i + 1)
             _, eve_loss = self._train('eve', iterations)
             self.eve_errors.append(eve_loss)
 

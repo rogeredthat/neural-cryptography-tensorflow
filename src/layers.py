@@ -1,5 +1,5 @@
 import tensorflow as tf
-from config import FILTERS
+from config import *
 
 
 def conv1d(input_, filter_shape, stride, name="conv1d"):

@@ -1,3 +1,5 @@
+import sys
+sys.path.append("./src")
 import tensorflow as tf
 
 from argparse import ArgumentParser

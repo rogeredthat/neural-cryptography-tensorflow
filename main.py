@@ -33,9 +33,10 @@ def build_parser():
 def main():
     parser = build_parser()
     options = parser.parse_args()
-
+    saver = tf.train.Saver()
     with tf.Session() as sess:
-        crypto_net = CryptoNet(sess, msg_len=options.msg_len, epochs=options.epochs,
+
+        crypto_net = CryptoNet(sess, saver, msg_len=options.msg_len, epochs=options.epochs,
                                batch_size=options.batch_size, learning_rate=options.learning_rate)
 
         crypto_net.train()

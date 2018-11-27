@@ -14,7 +14,7 @@ from utils import *
 
 
 class CryptoNet(object):
-    def __init__(self, sess, msg_len=MSG_LEN, batch_size=BATCH_SIZE,
+    def __init__(self, saver_obj, sess, saver_obj, msg_len=MSG_LEN, batch_size=BATCH_SIZE,
                  epochs=NUM_EPOCHS, learning_rate=LEARNING_RATE):
         """
         Args:
@@ -27,6 +27,7 @@ class CryptoNet(object):
         """
 
         self.sess = sess
+        self.saver_obj = saver_obj
         self.msg_len = msg_len
         self.key_len = self.msg_len
         self.N = self.msg_len
@@ -71,11 +72,13 @@ class CryptoNet(object):
 
     def train(self):
         # Loss Functions
+        save_path = "./checkpoints/"
         self.decrypt_err_eve = tf.reduce_mean(tf.abs(self.msg - self.eve_output))
         self.decrypt_err_bob = tf.reduce_mean(tf.abs(self.msg - self.bob_output))
         self.loss_bob = self.decrypt_err_bob + (1. - self.decrypt_err_eve) ** 2.
 
         # Get training variables corresponding to each network
+        #TODO
         self.t_vars = tf.trainable_variables()
         self.alice_or_bob_vars = [var for var in self.t_vars if 'alice_' in var.name or 'bob_' in var.name]
         self.eve_vars = [var for var in self.t_vars if 'eve_' in var.name]
@@ -89,6 +92,8 @@ class CryptoNet(object):
         self.bob_errors, self.eve_errors = [], []
 
         # Begin Training
+
+        #CHANGE WHEN RESTORING
         tf.global_variables_initializer().run()
         for i in range(self.epochs):
             iterations = 2000
@@ -96,10 +101,16 @@ class CryptoNet(object):
             print('Training Alice and Bob, Epoch:', i + 1)
             bob_loss, _ = self._train('bob', iterations)
             self.bob_errors.append(bob_loss)
+            print(bob_loss)
 
             print('Training Eve, Epoch:', i + 1)
             _, eve_loss = self._train('eve', iterations)
             self.eve_errors.append(eve_loss)
+            print(eve_loss)
+
+            if (i % 2 == 0):
+                name = save_path + "model" + str(i)+".ckpt"
+                self.saver_obj.save( sess = sess , save_path = name)  #always save with .ckpt format ##very very important
 
         self.plot_errors()
 
